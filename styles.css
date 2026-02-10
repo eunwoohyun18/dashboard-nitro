@@ -1,0 +1,60 @@
+:root{
+  --primary-yellow:#FFD066;
+  --sky-blue:#7FD3FF;
+  --deep-blue:#2F6FA8;
+  --black:#000000;
+  --dark-gray:#0B0F16;
+  --light-gray:rgba(255,255,255,0.04);
+  --medium-gray:rgba(255,255,255,0.06);
+  --white:#FFFFFF;
+}
+
+/* Global background using the user's Steam image (large, letterbox-friendly) */
+html,body{
+  height:100%;
+}
+body{
+  margin:0;
+  color:var(--white);
+  font-family:Inter,system-ui,Arial,sans-serif;
+  background-color: #050708; /* solid fallback */
+  background-image: url("https://images.steamusercontent.com/ugc/2310974141604980016/B4EF3A7A2D1772DE26B1A6F51CE33A04FD8BB917/?imw=5000&imh=5000&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center center;
+  background-attachment: fixed;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+/* Soft dark overlay so text remains legible on top of the dramatic image */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background: linear-gradient(180deg, rgba(0,0,0,0.55), rgba(0,0,0,0.65));
+  pointer-events:none;
+  z-index:-1;
+}
+
+/* Make sure existing fixed background helpers (if any) don't cover the image */
+.bg-gradient, .bg-texture, .bg-minecraft, .bg-particles{
+  display:none !important;
+}
+
+/* Small utility tweaks used by the pages */
+.container{max-width:1400px;margin:0 auto;padding:0 20px}
+.with-entrance{opacity:0;transform:translateY(8px);transition:opacity .6s ease,transform .6s ease}
+.with-entrance.visible{opacity:1;transform:none}
+
+/* Make .plan-card slightly translucent so the background can gently peek through */
+.plan-card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));backdrop-filter:blur(6px) saturate(120%);border-radius:14px}
+
+/* Fallback for headings to improve contrast */
+h1,h2,h3{color:var(--white)}
+
+/* Responsive: reduce background-attachment on mobile for performance */
+@media (max-width:768px){
+  body{background-attachment:scroll}
+  body::before{background:linear-gradient(180deg, rgba(0,0,0,0.6), rgba(0,0,0,0.6));}
+}
