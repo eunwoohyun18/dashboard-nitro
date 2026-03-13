@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nether Nodes — Host Like a Legend</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&amp;family=Orbitron:wght@700;900&amp;family=Inter:wght@300;400;500&amp;display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080c1a;--panel:#0d1530;--panel2:#101d3a;
+  --accent:#ff2d2d;--accent2:#c0392b;--accent3:#ff4444;--green:#4ade80;
+  --text:#e2eaf8;--muted:#5a6e91;--muted2:#8899bb;
+  --border:rgba(255,45,45,0.1);--border2:rgba(255,255,255,0.06);
+  --banner-h:36px;--nav-h:56px;--top:92px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;overflow-x:hidden;-webkit-tap-highlight-color:transparent;}
+
+/* BG */
+body::before{content:'';position:fixed;inset:0;z-index:0;
+  background:
+    radial-gradient(ellipse 80% 50% at 15% 20%,rgba(99,60,180,.18) 0%,transparent 55%),
+    radial-gradient(ellipse 70% 45% at 85% 75%,rgba(60,80,200,.15) 0%,transparent 55%),
+    radial-gradient(ellipse 60% 40% at 50% 50%,rgba(80,30,160,.08) 0%,transparent 60%),
+    radial-gradient(ellipse 90% 60% at 70% 10%,rgba(180,20,20,.08) 0%,transparent 50%);
+  pointer-events:none;}
+body::after{content:'';position:fixed;inset:0;z-index:0;
+  background-image:radial-gradient(circle,rgba(255,255,255,.08) 1px,transparent 1px);
+  background-size:28px 28px;pointer-events:none;opacity:.4;}
+
+/* ── BANNER ── */
+.banner{position:fixed;top:0;left:0;right:0;z-index:300;height:var(--banner-h);
+  background:linear-gradient(90deg,#3b0a0a,#6b1515,#3b0a0a);
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  font-family:'Rajdhani',sans-serif;font-size:.72rem;font-weight:600;letter-spacing:.3px;padding:0 12px;overflow:hidden;}
+.bb{background:var(--accent3);color:#000;padding:1px 7px;border-radius:3px;font-size:.6rem;font-weight:800;letter-spacing:1px;white-space:nowrap;}
+.bc{background:rgba(255,255,255,.12);padding:1px 8px;border-radius:3px;font-family:'Orbitron',sans-serif;font-size:.6rem;color:#ff6b6b;white-space:nowrap;}
+.blink{background:var(--accent2);color:#fff;padding:3px 10px;border-radius:100px;font-size:.62rem;text-decoration:none;font-weight:700;white-space:nowrap;}
+
+/* ── NAV ── */
+nav{position:fixed;top:var(--banner-h);left:0;right:0;z-index:200;height:var(--nav-h);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 16px;background:rgba(5,8,16,.95);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);}
+.logo{font-family:'Orbitron',sans-serif;font-weight:900;font-size:1.1rem;letter-spacing:2px;color:var(--accent);text-shadow:0 0 18px rgba(255,45,45,.45);text-decoration:none;}
+.logo-d{color:rgba(226,234,248,.55);}
+.ham{background:none;border:none;color:var(--text);font-size:1.4rem;padding:6px;cursor:pointer;display:flex;flex-direction:column;gap:5px;align-items:flex-end;}
+.ham span{display:block;background:var(--text);border-radius:2px;transition:all .3s;}
+.ham span:nth-child(1){width:22px;height:2px;}
+.ham span:nth-child(2){width:16px;height:2px;}
+.ham span:nth-child(3){width:22px;height:2px;}
+.ham.open span:nth-child(1){transform:translateY(7px) rotate(45deg);width:22px;}
+.ham.open span:nth-child(2){opacity:0;transform:translateX(8px);}
+.ham.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+
+/* MOBILE MENU DRAWER */
+.drawer{position:fixed;top:calc(var(--banner-h) + var(--nav-h));left:0;right:0;bottom:0;z-index:190;
+  background:rgba(5,8,16,.98);backdrop-filter:blur(20px);
+  display:flex;flex-direction:column;padding:24px 20px;gap:4px;
+  transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);overflow-y:auto;}
+.drawer.open{transform:translateX(0);}
+.drawer a{color:var(--muted2);text-decoration:none;font-family:'Rajdhani',sans-serif;font-weight:600;font-size:1.1rem;letter-spacing:1.5px;text-transform:uppercase;padding:14px 0;border-bottom:1px solid var(--border2);display:flex;align-items:center;justify-content:space-between;}
+.drawer a:hover{color:var(--accent);}
+.drawer .dcta{background:var(--accent);color:var(--bg)!important;padding:14px 20px;border-radius:8px;border:none!important;justify-content:center;margin-top:12px;font-weight:700;}
+
+/* ── HERO ── */
+.hero{padding:calc(var(--top) + 28px) 16px 48px;position:relative;overflow:hidden;z-index:1;}
+.orb{position:absolute;border-radius:50%;filter:blur(70px);pointer-events:none;animation:drift 12s ease-in-out infinite alternate;}
+.o1{width:320px;height:320px;background:rgba(180,20,20,.18);top:-80px;right:-80px;}
+.o2{width:280px;height:280px;background:rgba(255,45,45,.08);bottom:-60px;left:-80px;animation-delay:-5s;}
+@keyframes drift{from{transform:translate(0,0)}to{transform:translate(20px,30px)}}
+
+.eyebrow{display:inline-flex;align-items:center;gap:7px;background:rgba(180,20,20,.18);border:1px solid rgba(180,20,20,.35);padding:5px 13px;border-radius:100px;font-family:'Rajdhani',sans-serif;font-size:.66rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#ff8080;margin-bottom:20px;animation:fu .7s both;}
+.edot{width:5px;height:5px;background:#ff8080;border-radius:50%;animation:blink 2s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+h1{font-family:'Orbitron',sans-serif;font-weight:900;font-size:2.3rem;line-height:1.05;letter-spacing:-1px;margin-bottom:16px;animation:fu .7s .1s both;}
+h1 .c{color:var(--accent);text-shadow:0 0 30px rgba(255,45,45,.45);}
+h1 .v{color:#ff8080;}
+.hero-desc{color:var(--muted2);font-size:.9rem;line-height:1.7;margin-bottom:28px;animation:fu .7s .15s both;}
+.hero-desc strong{color:var(--accent);font-weight:500;}
+.ctas{display:flex;flex-direction:column;gap:10px;animation:fu .7s .2s both;}
+.btn-p{background:var(--accent);color:var(--bg);padding:14px;border-radius:8px;border:none;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:.95rem;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 0 28px rgba(255,45,45,.25);transition:all .2s;position:relative;overflow:hidden;}
+.btn-p:active{transform:scale(.97);}
+.btn-o{background:transparent;color:var(--text);padding:13px;border-radius:8px;border:1px solid var(--border2);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:.9rem;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s;}
+.btn-o:active{background:rgba(255,45,45,.05);}
+
+/* Hero stats */
+.hstats{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);margin-top:36px;border:1px solid var(--border);border-radius:12px;overflow:hidden;animation:fu .7s .3s both;}
+.hs{background:var(--panel);padding:14px 12px;}
+.hsv{font-family:'Orbitron',sans-serif;font-size:1.4rem;font-weight:700;color:var(--accent);}
+.hsl{color:var(--muted);font-size:.66rem;letter-spacing:1px;text-transform:uppercase;margin-top:3px;}
+
+/* Live server mini-panel */
+
+/* ── TRUST STRIP ── */
+.trust{background:var(--panel);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:14px 16px;display:flex;overflow-x:auto;gap:20px;position:relative;z-index:1;scrollbar-width:none;}
+.trust::-webkit-scrollbar{display:none;}
+.ti{display:flex;align-items:center;gap:7px;font-family:'Rajdhani',sans-serif;font-size:.76rem;font-weight:600;color:var(--muted2);white-space:nowrap;flex-shrink:0;}
+.ti strong{color:var(--text);}
+
+/* ── SHARED SECTION STYLES ── */
+section{position:relative;z-index:1;}
+.sec{padding:52px 16px;}
+.sec-head{margin-bottom:28px;}
+.sec-tag{display:inline-block;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:.66rem;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
+h2{font-family:'Orbitron',sans-serif;font-weight:700;font-size:1.55rem;letter-spacing:-.3px;margin-bottom:8px;line-height:1.2;}
+h2 .hl{color:var(--accent);}
+h2 .vl{color:#ff8080;}
+.sec-sub{color:var(--muted2);font-size:.86rem;line-height:1.7;}
+
+/* ── WHY CARDS ── */
+.why-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.wc{background:var(--panel);border:1px solid var(--border2);border-radius:14px;padding:18px 14px;transition:border-color .2s;}
+.wc:active{border-color:rgba(255,45,45,.25);}
+.wi{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;margin-bottom:12px;}
+.wi1{background:linear-gradient(135deg,#b91c1c,#ef4444);}
+.wi2{background:linear-gradient(135deg,#991b1b,#dc2626);}
+.wi3{background:linear-gradient(135deg,#059669,#10b981);}
+.wi4{background:linear-gradient(135deg,#b45309,#f59e0b);}
+.wi5{background:linear-gradient(135deg,#b91c1c,#f87171);}
+.wi6{background:linear-gradient(135deg,#7f1d1d,#ef4444);}
+.wt{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:.9rem;margin-bottom:5px;}
+.wd{color:var(--muted2);font-size:.78rem;line-height:1.55;}
+
+/* ── PLAN CARDS ── */
+.pg{display:flex;flex-direction:column;gap:12px;}
+.pc{background:rgba(255,255,255,.05);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:18px 16px;position:relative;transition:border-color .2s,background .2s;box-shadow:0 4px 24px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.08);}
+.pc.pop{border-color:rgba(192,57,43,.5);background:var(--panel2);}
+.pc.pop::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#c0392b,transparent);border-radius:14px 14px 0 0;}
+.pc.bv{border-color:rgba(220,38,38,.4);}
+.pc.bv::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#ef4444,transparent);border-radius:14px 14px 0 0;}
+.pc.eli{border-color:rgba(220,38,38,.45);}
+.pc-badge{position:absolute;top:12px;right:12px;padding:2px 9px;border-radius:100px;font-family:'Rajdhani',sans-serif;font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;}
+.bpop{background:#c0392b;color:#fff;}
+.bbv{background:#ef4444;color:#fff;}
+.beli{background:linear-gradient(90deg,#dc2626,#ff2d2d);color:#fff;}
+.ph{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.pe{font-size:1.1rem;}
+.pname{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:.98rem;}
+.pspecs{border-top:1px solid rgba(255,255,255,.05);padding-top:10px;margin-bottom:12px;}
+.sr{display:flex;justify-content:space-between;padding:4px 0;font-size:.78rem;border-bottom:1px solid rgba(255,255,255,.025);}
+.sr:last-child{border-bottom:none;}
+.sl{color:var(--muted);}
+.sv{font-weight:500;}
+.sv.g{color:var(--green);font-weight:600;}
+.ppr{display:flex;align-items:baseline;gap:6px;margin-bottom:6px;}
+.po{color:var(--muted);font-size:.76rem;text-decoration:line-through;}
+.pnew{font-family:'Orbitron',sans-serif;font-weight:700;font-size:1.45rem;}
+.pper{color:var(--muted);font-size:.7rem;}
+.ppay{color:var(--muted);font-size:.66rem;margin-bottom:12px;}
+.btn-ord{width:100%;padding:11px;border-radius:8px;border:1px solid rgba(99,102,241,.4);background:rgba(79,70,229,.15);color:var(--text);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:.85rem;letter-spacing:1.5px;text-transform:uppercase;transition:all .2s;}
+.btn-ord:active{background:rgba(79,70,229,.35);}
+.promo-l{text-align:center;margin-top:8px;font-size:.68rem;color:#ff6b6b;}
+.promo-l strong{font-family:'Orbitron',sans-serif;font-size:.62rem;}
+
+/* ── TABS ── */
+.tabs{display:flex;gap:3px;background:var(--panel);border:1px solid var(--border);border-radius:9px;padding:3px;margin-bottom:20px;overflow-x:auto;scrollbar-width:none;}
+.tabs::-webkit-scrollbar{display:none;}
+.tab{flex:1;min-width:80px;padding:9px 4px;border-radius:7px;border:none;background:transparent;color:var(--muted2);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:.78rem;letter-spacing:.8px;text-transform:uppercase;transition:all .2s;white-space:nowrap;}
+.tab.on{background:var(--accent2);color:#fff;}
+
+/* ── VPS ── */
+.vps-g{display:flex;flex-direction:column;gap:12px;}
+.vc{background:rgba(255,255,255,.05);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:16px;box-shadow:0 4px 24px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.08);}
+.vc.vfp{border-color:rgba(192,57,43,.4);}
+.vc.veli{border-color:rgba(220,38,38,.4);}
+.vc-vtag{display:inline-block;margin-bottom:8px;padding:2px 9px;border-radius:100px;font-family:'Rajdhani',sans-serif;font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;}
+.vc-name{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:.95rem;margin-bottom:3px;}
+.vc-sub{color:var(--muted);font-size:.74rem;margin-bottom:10px;}
+.vc-row{display:flex;justify-content:space-between;align-items:center;}
+.vc-ram{font-size:.8rem;color:var(--muted2);}
+.vc-ram span{color:var(--text);font-weight:600;}
+.vc-price{font-family:'Orbitron',sans-serif;font-size:1.35rem;font-weight:700;color:var(--accent);}
+.vc-price small{font-size:.62rem;color:var(--muted);font-family:'Inter';font-weight:400;}
+.vc-pay{color:var(--muted);font-size:.65rem;margin:8px 0 10px;}
+.why-vps-g{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px;}
+.wv{background:var(--panel);border:1px solid var(--border2);border-radius:10px;padding:12px;display:flex;align-items:center;gap:10px;font-family:'Rajdhani',sans-serif;font-size:.78rem;font-weight:600;}
+.wvi{width:28px;height:28px;border-radius:7px;background:var(--panel2);display:flex;align-items:center;justify-content:center;font-size:.8rem;border:1px solid var(--border);flex-shrink:0;}
+
+/* ── DOMAINS ── */
+.dom-g{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.dc{background:var(--panel);border:1px solid var(--border2);border-radius:10px;padding:14px 6px;text-align:center;transition:all .2s;}
+.dc:active{border-color:rgba(255,45,45,.3);background:var(--panel2);}
+.dext{font-family:'Orbitron',sans-serif;font-weight:700;font-size:.88rem;color:var(--accent);margin-bottom:4px;}
+.dprice{color:var(--muted);font-size:.62rem;}
+
+/* ── REVIEWS ── */
+.rev-g{display:flex;flex-direction:column;gap:12px;}
+.rv{background:rgba(255,255,255,.05);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:18px 16px;position:relative;}
+.rq{position:absolute;top:14px;right:14px;font-size:2rem;color:rgba(255,45,45,.07);font-family:Georgia,serif;line-height:1;}
+.rh{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.ra{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.86rem;flex-shrink:0;}
+.rname{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:.88rem;}
+.rgame{color:var(--muted);font-size:.7rem;}
+.rstars{color:#ff6b6b;font-size:.78rem;letter-spacing:2px;margin-bottom:8px;}
+.rtext{color:var(--muted2);font-size:.84rem;line-height:1.62;}
+
+/* ── FAQ ── */
+.faq-list{display:flex;flex-direction:column;gap:8px;}
+.fi{background:var(--panel);border:1px solid var(--border2);border-radius:12px;overflow:hidden;transition:border-color .2s;}
+.fi.open{border-color:rgba(255,45,45,.2);}
+.fq{display:flex;justify-content:space-between;align-items:center;padding:15px 16px;background:none;border:none;width:100%;text-align:left;color:var(--text);font-size:.86rem;font-weight:500;gap:12px;cursor:pointer;}
+.ficon{color:var(--muted);font-size:1.1rem;transition:transform .3s;flex-shrink:0;}
+.fi.open .ficon{transform:rotate(45deg);color:var(--accent);}
+.fa{max-height:0;overflow:hidden;transition:max-height .35s ease,padding .3s;color:var(--muted2);font-size:.82rem;line-height:1.68;padding:0 16px;}
+.fi.open .fa{max-height:150px;padding:0 16px 16px;}
+
+/* ── FOOTER ── */
+footer{border-top:1px solid var(--border);padding:40px 16px 100px;position:relative;z-index:1;}
+.fl{font-family:'Orbitron',sans-serif;font-weight:900;font-size:1.05rem;color:var(--accent);letter-spacing:2px;margin-bottom:10px;}
+.fd{color:var(--muted2);font-size:.8rem;line-height:1.7;margin-bottom:16px;}
+.fsoc{display:flex;gap:8px;margin-bottom:28px;}
+.fsoc a{width:36px;height:36px;border-radius:9px;background:var(--panel2);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:.9rem;text-decoration:none;}
+.fcols{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:28px;}
+.fcol h4{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:.66rem;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);margin-bottom:12px;}
+.fcol a{display:block;color:var(--muted2);text-decoration:none;font-size:.8rem;margin-bottom:8px;}
+.fcopy{color:var(--muted);font-size:.72rem;padding-top:20px;border-top:1px solid var(--border2);}
+.fbadges{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;}
+.fbadge{background:var(--panel);border:1px solid var(--border2);border-radius:5px;padding:4px 10px;font-family:'Rajdhani',sans-serif;font-size:.62rem;font-weight:600;letter-spacing:.8px;color:var(--muted);}
+
+/* ── STICKY BAR ── */
+.sticky{position:fixed;bottom:0;left:0;right:0;z-index:190;background:rgba(5,8,16,.97);border-top:1px solid rgba(255,45,45,.2);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;backdrop-filter:blur(14px);}
+.sticky-txt{font-family:'Rajdhani',sans-serif;font-size:.78rem;font-weight:600;flex:1;min-width:0;}
+.sticky-label{color:var(--accent);font-family:'Orbitron',sans-serif;font-size:.6rem;display:block;margin-bottom:1px;}
+.sticky-code{color:#ff6b6b;font-family:'Orbitron',sans-serif;font-size:.68rem;}
+.sticky-cta{background:linear-gradient(90deg,var(--accent2),#7f1d1d);color:#fff;padding:10px 16px;border-radius:8px;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:.8rem;letter-spacing:1px;text-decoration:none;white-space:nowrap;flex-shrink:0;}
+.sticky-x{background:none;border:none;color:var(--muted);font-size:.95rem;padding:4px;flex-shrink:0;}
+
+/* ── REVEAL ── */
+.rv2{opacity:0;transform:translateY(16px);transition:opacity .6s ease,transform .6s ease;}
+.rv2.vis{opacity:1;transform:none;}
+
+@keyframes fu{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+
+/* ── WELCOME POPUP ── */
+.popup-overlay{position:fixed;inset:0;z-index:800;background:rgba(0,0,0,.45);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .4s;}
+.popup-overlay.show{opacity:1;pointer-events:all;}
+.popup-box{background:rgba(255,255,255,.08);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,.18);border-radius:22px;width:100%;max-width:320px;padding:28px 22px 24px;text-align:center;transform:scale(.85) translateY(20px);transition:transform .4s cubic-bezier(.34,1.56,.64,1);position:relative;box-shadow:0 8px 32px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.15);}
+.popup-overlay.show .popup-box{transform:scale(1) translateY(0);}
+.popup-close{position:absolute;top:12px;right:14px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.15);color:#fff;width:28px;height:28px;border-radius:50%;font-size:.85rem;display:flex;align-items:center;justify-content:center;}
+.popup-icon{width:58px;height:58px;background:linear-gradient(135deg,rgba(124,58,237,.8),rgba(168,85,247,.8));backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.2);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;margin:0 auto 14px;}
+.popup-tag{display:inline-block;background:linear-gradient(90deg,#f59e0b,#fbbf24);color:#000;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:.68rem;letter-spacing:1.5px;padding:3px 12px;border-radius:20px;margin-bottom:12px;}
+.popup-title{font-family:'Orbitron',sans-serif;font-size:1.1rem;font-weight:700;color:#fff;margin-bottom:6px;text-shadow:0 2px 8px rgba(0,0,0,.3);}
+.popup-title span{color:var(--accent);}
+.popup-sub{font-size:.8rem;color:rgba(255,255,255,.7);line-height:1.6;margin-bottom:16px;}
+.popup-code-box{background:rgba(255,45,45,.1);border:1.5px dashed rgba(255,45,45,.5);border-radius:10px;padding:12px 16px;margin-bottom:18px;letter-spacing:3px;font-family:'Orbitron',sans-serif;font-size:1.1rem;font-weight:700;color:#ff6b6b;backdrop-filter:blur(8px);}
+.popup-btn{display:block;width:100%;background:linear-gradient(90deg,var(--accent2),var(--accent));color:#fff;padding:13px;border-radius:12px;border:none;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:1rem;letter-spacing:1.5px;text-transform:uppercase;box-shadow:0 0 24px rgba(255,45,45,.3);margin-bottom:12px;text-decoration:none;}
+.popup-btn:active{opacity:.88;}
+.popup-later{background:none;border:none;color:rgba(255,255,255,.4);font-size:.78rem;cursor:pointer;width:100%;}
+.popup-later:hover{color:rgba(255,255,255,.7);}
+
+/* ── QR PAYMENT MODAL ── */
+.qr-overlay{position:fixed;inset:0;z-index:600;background:rgba(0,0,0,.85);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .3s;}
+.qr-overlay.show{opacity:1;pointer-events:all;}
+.qr-box{background:rgba(10,18,40,.85);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,.13);border-radius:20px;width:100%;max-width:340px;padding:24px 20px 28px;text-align:center;transform:scale(.9);transition:transform .3s cubic-bezier(.4,0,.2,1);}
+.qr-overlay.show .qr-box{transform:scale(1);}
+.qr-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.qr-title{font-family:'Orbitron',sans-serif;font-size:.85rem;font-weight:700;letter-spacing:1px;color:var(--text);}
+.qr-close-btn{background:rgba(255,255,255,.07);border:none;color:var(--muted2);width:30px;height:30px;border-radius:50%;font-size:.9rem;display:flex;align-items:center;justify-content:center;}
+.qr-upi-id{display:flex;align-items:center;justify-content:center;gap:8px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:9px 14px;margin-bottom:16px;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:.95rem;color:var(--text);}
+.qr-upi-id span{font-size:.8rem;color:var(--muted2);}
+.qr-copy{background:none;border:none;color:var(--muted2);font-size:1rem;cursor:pointer;padding:2px 4px;}
+.qr-copy:active{color:var(--green);}
+.qr-img-wrap{background:#e8f4ff;border-radius:14px;padding:14px;margin-bottom:16px;display:inline-block;width:100%;}
+.qr-img-wrap img{width:100%;max-width:220px;display:block;margin:0 auto;border-radius:8px;}
+.qr-amount{background:rgba(255,45,45,.08);border:1px solid rgba(255,45,45,.2);border-radius:10px;padding:10px 14px;margin-bottom:14px;}
+.qr-amount-label{font-size:.68rem;color:var(--muted2);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;}
+.qr-amount-val{font-family:'Orbitron',sans-serif;font-size:1.4rem;font-weight:700;color:var(--text);}
+.qr-amount-plan{font-size:.72rem;color:var(--muted2);margin-top:2px;}
+.qr-steps{text-align:left;margin-bottom:16px;}
+.qr-step{display:flex;align-items:flex-start;gap:9px;font-size:.78rem;color:var(--muted2);margin-bottom:8px;line-height:1.5;}
+.qr-step-num{background:var(--accent);color:#000;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Orbitron',sans-serif;font-size:.6rem;font-weight:700;flex-shrink:0;margin-top:1px;}
+.qr-btns{display:flex;flex-direction:column;gap:10px;}
+.qr-discord-btn{display:flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(90deg,#5865f2,#4752c4);color:#fff;padding:13px;border-radius:10px;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:1rem;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;box-shadow:0 0 18px rgba(88,101,242,.3);}
+.qr-discord-btn:active{opacity:.88;}
+.qr-ticket-btn{display:flex;align-items:center;justify-content:center;gap:8px;background:rgba(255,45,45,.12);border:1px solid rgba(255,45,45,.35);color:var(--accent);padding:13px;border-radius:10px;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:1rem;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;}
+.qr-ticket-btn:active{background:rgba(255,45,45,.25);}
+.qr-note{font-size:.68rem;color:var(--muted);margin-top:10px;line-height:1.5;}
+
+/* ── CART MODAL ── */
+.cart-overlay{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;}
+.cart-overlay.show{opacity:1;pointer-events:all;}
+.cart-sheet{background:rgba(10,18,40,.85);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,.12);border-radius:20px 20px 0 0;width:100%;max-width:500px;padding:0 0 32px;transform:translateY(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);max-height:92vh;overflow-y:auto;}
+.cart-overlay.show .cart-sheet{transform:translateY(0);}
+.cart-drag{width:40px;height:4px;background:rgba(255,255,255,.15);border-radius:2px;margin:12px auto 0;}
+.cart-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px 10px;border-bottom:1px solid rgba(255,255,255,.06);}
+.cart-title{font-family:'Orbitron',sans-serif;font-size:.85rem;font-weight:700;letter-spacing:1px;color:var(--text);}
+.cart-close{background:rgba(255,255,255,.06);border:none;color:var(--muted2);width:30px;height:30px;border-radius:50%;font-size:.9rem;display:flex;align-items:center;justify-content:center;}
+
+/* Cart table header */
+.cart-table-head{display:grid;grid-template-columns:1fr auto auto;gap:8px;padding:10px 18px;background:rgba(255,45,45,.08);font-family:'Rajdhani',sans-serif;font-size:.72rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted2);}
+
+/* Cart item */
+.cart-item{padding:14px 18px;border-bottom:1px solid rgba(255,255,255,.05);}
+.cart-item-top{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:start;margin-bottom:8px;}
+.cart-item-name{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:.95rem;}
+.cart-item-sub{font-size:.75rem;color:var(--muted2);margin-top:2px;}
+.cart-item-sub span{color:var(--muted);font-size:.7rem;}
+.cart-qty{display:flex;align-items:center;gap:0;}
+.qty-btn{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);color:var(--text);width:26px;height:26px;font-size:.9rem;display:flex;align-items:center;justify-content:center;}
+.qty-btn:first-child{border-radius:6px 0 0 6px;}
+.qty-btn:last-child{border-radius:0 6px 6px 0;}
+.qty-val{background:rgba(255,255,255,.04);border-top:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.08);width:32px;height:26px;display:flex;align-items:center;justify-content:center;font-family:'Orbitron',sans-serif;font-size:.72rem;font-weight:700;}
+.cart-item-price{text-align:right;}
+.cip-main{font-family:'Orbitron',sans-serif;font-size:.9rem;font-weight:700;color:var(--text);}
+.cip-cycle{font-size:.65rem;color:var(--muted);display:block;margin-top:1px;}
+.cart-remove{background:none;border:none;color:var(--muted);font-size:1rem;padding:2px 6px;align-self:start;}
+
+/* Promo code */
+.cart-promo{padding:12px 18px;border-bottom:1px solid rgba(255,255,255,.05);}
+.promo-tabs{display:flex;margin-bottom:10px;}
+.ptab{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:var(--muted2);padding:6px 14px;font-family:'Rajdhani',sans-serif;font-size:.75rem;font-weight:700;letter-spacing:.5px;border-radius:6px 6px 0 0;border-bottom:none;}
+.ptab.on{background:var(--panel2);color:var(--text);border-color:rgba(255,45,45,.2);}
+.promo-box{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:0 8px 8px 8px;padding:10px 12px;display:flex;gap:8px;align-items:center;}
+.promo-icon{color:var(--muted);font-size:.9rem;}
+.promo-input{background:none;border:none;color:var(--text);font-size:.82rem;flex:1;outline:none;font-family:'Inter',sans-serif;}
+.promo-input::placeholder{color:var(--muted);}
+.promo-validate{background:rgba(255,45,45,.12);border:1px solid rgba(255,45,45,.2);color:var(--accent);padding:6px 14px;border-radius:6px;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:.75rem;letter-spacing:.5px;white-space:nowrap;}
+.promo-validate:active{background:rgba(255,45,45,.25);}
+.promo-hint{font-size:.68rem;color:var(--green);margin-top:6px;display:none;}
+.promo-hint.show{display:block;}
+
+/* Order summary */
+.cart-summary{margin:14px 18px 0;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:12px;overflow:hidden;}
+.cs-head{background:rgba(255,45,45,.1);padding:10px 14px;font-family:'Orbitron',sans-serif;font-size:.78rem;font-weight:700;letter-spacing:1px;text-align:center;color:var(--text);}
+.cs-row{display:flex;justify-content:space-between;padding:9px 14px;font-size:.8rem;border-bottom:1px solid rgba(255,255,255,.04);}
+.cs-row:last-child{border-bottom:none;}
+.cs-label{color:var(--muted2);}
+.cs-val{font-weight:500;}
+.cs-total-row{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:rgba(0,0,0,.2);}
+.cs-total-label{font-size:.72rem;color:var(--muted2);text-transform:uppercase;letter-spacing:1px;}
+.cs-total-amt{font-family:'Orbitron',sans-serif;font-size:1.3rem;font-weight:700;color:var(--text);}
+.cs-total-due{font-size:.65rem;color:var(--muted);display:block;text-align:right;}
+.cs-discount{color:var(--green);font-weight:600;}
+
+/* Checkout btn */
+.cart-checkout{display:block;margin:14px 18px 0;background:linear-gradient(90deg,#16a34a,#22c55e);color:#fff;padding:14px;border-radius:10px;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:1rem;letter-spacing:1.5px;text-transform:uppercase;text-align:center;text-decoration:none;border:none;width:calc(100% - 36px);box-shadow:0 0 20px rgba(34,197,94,.2);}
+.cart-checkout:active{opacity:.88;}
+.cart-continue{display:block;text-align:center;margin-top:10px;color:var(--muted2);font-size:.78rem;text-decoration:none;padding:4px;}
+.cart-empty-msg{padding:28px 18px;text-align:center;color:var(--muted);font-size:.85rem;}
+</style>
+</head>
+<body>
+
+<!-- Banner -->
+<canvas id="particles" style="position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5;"></canvas>
+<div class="banner">
+  <span class="bb">⚡ ELITE</span>
+  10% OFF + Free DDoS &nbsp;|&nbsp; <span class="bc">NETHER2026</span>
+  <a href="#mc" class="blink">Claim →</a>
+</div>
+
+<!-- Nav -->
+<nav>
+  <a class="logo" href="#">NETHER<span class="logo-d">NODES</span></a>
+  <button class="ham" id="ham" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- Drawer -->
+<div class="drawer" id="drawer">
+  <a href="#why" class="ditem">Why Us <span>›</span></a>
+  <a href="#mc" class="ditem">⛏️ Minecraft <span>›</span></a>
+  <a href="#game" class="ditem">🎮 Game Hosting <span>›</span></a>
+  <a href="#bot" class="ditem">🤖 Bot Hosting <span>›</span></a>
+  <a href="#vps" class="ditem">🖥️ VPS <span>›</span></a>
+  <a href="#domains" class="ditem">🌐 Domains <span>›</span></a>
+  <a href="#reviews" class="ditem">⭐ Reviews <span>›</span></a>
+  <a href="#mc" class="dcta">🚀 Get Started</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="orb o1"></div><div class="orb o2"></div>
+  <div class="eyebrow"><span class="edot"></span> NETHER NODES — PREMIUM LAUNCH</div>
+  <h1>Host Like a<br><span class="c">Legend.</span><br>Play Without<br><span class="v">Limits.</span></h1>
+  <p class="hero-desc"><strong>Where Every Millisecond Matters</strong> — Low latency, DDoS protection, Indian servers, 99.9% uptime, Node.js &amp; Python bot support.</p>
+  <div class="ctas">
+    <a href="#mc" class="btn-p">🚀 Claim Elite Deal</a>
+    <a href="#game" class="btn-o">See All Plans →</a>
+  </div>
+  <div class="hstats">
+    <div class="hs"><div class="hsv">4.9★</div><div class="hsl">User Rating</div></div>
+    <div class="hs"><div class="hsv">99.9%</div><div class="hsl">Uptime SLA</div></div>
+    <div class="hs"><div class="hsv">&lt;10ms</div><div class="hsl">India Ping</div></div>
+    <div class="hs"><div class="hsv">30s</div><div class="hsl">Deploy</div></div>
+  </div>
+</section>
+
+<!-- Trust Strip -->
+<div class="trust">
+  <div class="ti">★★★★★ <strong>4.9/5</strong></div>
+  <div class="ti">🛡️ <strong>Free DDoS Forever</strong></div>
+  <div class="ti">⚡ <strong>30s Deploy</strong></div>
+  <div class="ti">🌏 <strong>Indian Servers</strong></div>
+  <div class="ti">🎧 <strong>24/7 Support</strong></div>
+</div>
+
+<!-- WHY US -->
+<section class="sec" id="why">
+  <div class="sec-head rv2">
+    <div class="sec-tag">Low Latency. High Victory.</div>
+    <h2>Why Gamers Trust <span class="hl">Nether Nodes</span></h2>
+    <p class="sec-sub">Built for Indian gamers — everything you need to dominate.</p>
+  </div>
+  <div class="why-grid rv2">
+    <div class="wc"><div class="wi wi1">⚡</div><div class="wt">Low Latency</div><div class="wd">Optimized routing with &lt;10ms ping for Indian players.</div></div>
+    <div class="wc"><div class="wi wi2">🛡️</div><div class="wt">DDoS Protection</div><div class="wd">Enterprise-grade mitigation included free forever.</div></div>
+    <div class="wc"><div class="wi wi3">🇮🇳</div><div class="wt">Indian Servers</div><div class="wd">Data centers in Mumbai &amp; Chennai.</div></div>
+    <div class="wc"><div class="wi wi4">🕐</div><div class="wt">99.9% Uptime</div><div class="wd">SLA-backed guarantee. Always online.</div></div>
+    <div class="wc"><div class="wi wi5">🚀</div><div class="wt">Instant Setup</div><div class="wd">Deployed in under 30 seconds.</div></div>
+    <div class="wc"><div class="wi wi6">🎧</div><div class="wt">24/7 Support</div><div class="wd">Discord, tickets, and live chat.</div></div>
+  </div>
+</section>
+
+<!-- MINECRAFT -->
+<section class="sec" id="mc">
+  <div class="sec-head rv2">
+    <div class="sec-tag">⛏️ Minecraft Hosting</div>
+    <h2>Built for Gamers.<br><span class="vl">Powered by Legends.</span></h2>
+    <p class="sec-sub">One-click modpack installs, custom panel, instant setup.</p>
+  </div>
+  <div class="plans">
+
+    <!-- Spark Plan -->
+    <div class="pc rv2">
+      <div class="ph"><span class="pe">⚡</span><span class="pname">Spark Plan</span></div>
+      <div class="pspecs">
+        <div class="sr"><span class="sl">CPU</span><span class="sv">100%</span></div>
+        <div class="sr"><span class="sl">RAM</span><span class="sv">2GB</span></div>
+        <div class="sr"><span class="sl">Storage</span><span class="sv">10GB SSD</span></div>
+        <div class="sr"><span class="sl">DDoS Protection</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">Instant Setup</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">All MC Versions</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">24/7 Support</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">One-Click Datapack</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">One-Click Plugin</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">One-Click Mods</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">99.9% Uptime</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">SFTP Access</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">📍 Location</span><span class="sv">India/Mumbai 🇮🇳</span></div>
+      </div>
+      <div class="ppr"><span class="pnew">₹69</span><span class="pper">/mo</span></div>
+      <div class="ppay">💳 UPI — GPay | PhonePe | Paytm | BHIM</div>
+      <button class="btn-ord">Order Now</button>
+      <div class="promo-l">🎁 Use code <strong>NETHER2026</strong> for 10% OFF</div>
+    </div>
+
+    <!-- Bolt Plan -->
+    <div class="pc rv2">
+      <div class="ph"><span class="pe">🔩</span><span class="pname">Bolt Plan</span></div>
+      <div class="pspecs">
+        <div class="sr"><span class="sl">CPU</span><span class="sv">200%</span></div>
+        <div class="sr"><span class="sl">RAM</span><span class="sv">4GB</span></div>
+        <div class="sr"><span class="sl">Storage</span><span class="sv">20GB SSD</span></div>
+        <div class="sr"><span class="sl">DDoS Protection</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">Instant Setup</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">All MC Versions</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">24/7 Support</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">One-Click Datapack</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">One-Click Plugin</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">One-Click Mods</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">99.9% Uptime</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">SFTP Access</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">📍 Location</span><span class="sv">India/Mumbai 🇮🇳</span></div>
+      </div>
+      <div class="ppr"><span class="pnew">₹139</span><span class="pper">/mo</span></div>
+      <div class="ppay">💳 UPI — GPay | PhonePe | Paytm | BHIM</div>
+      <button class="btn-ord">Order Now</button>
+      <div class="promo-l">🎁 Use code <strong>NETHER2026</strong> for 10% OFF</div>
+    </div>
+
+    <!-- Hyper Plan -->
+    <div class="pc pop rv2">
+      <div class="pc-badge bpop">Most Popular</div>
+      <div class="ph"><span class="pe">🚀</span><span class="pname">Hyper Plan</span></div>
+      <div class="pspecs">
+        <div class="sr"><span class="sl">CPU</span><span class="sv">300%</span></div>
+        <div class="sr"><span class="sl">RAM</span><span class="sv">6GB</span></div>
+        <div class="sr"><span class="sl">Storage</span><span class="sv">30GB SSD</span></div>
+        <div class="sr"><span class="sl">DDoS Protection</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">Instant Setup</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">All MC Versions</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">24/7 Support</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">One-Click Datapack</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">One-Click Plugin</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">One-Click Mods</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">99.9% Uptime</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">SFTP Access</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">📍 Location</span><span class="sv">India/Mumbai 🇮🇳</span></div>
+      </div>
+      <div class="ppr"><span class="pnew">₹209</span><span class="pper">/mo</span></div>
+      <div class="ppay">💳 UPI — GPay | PhonePe | Paytm | BHIM</div>
+      <button class="btn-ord">Order Now</button>
+      <div class="promo-l">🎁 Use code <strong>NETHER2026</strong> for 10% OFF</div>
+    </div>
+
+    <!-- Paper Plan -->
+    <div class="pc rv2">
+      <div class="ph"><span class="pe">📄</span><span class="pname">Paper Plan</span></div>
+      <div class="pspecs">
+        <div class="sr"><span class="sl">CPU</span><span class="sv">400%</span></div>
+        <div class="sr"><span class="sl">RAM</span><span class="sv">8GB</span></div>
+        <div class="sr"><span class="sl">Storage</span><span class="sv">40GB SSD</span></div>
+        <div class="sr"><span class="sl">DDoS Protection</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">Instant Setup</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">All MC Versions</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">24/7 Support</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">One-Click Datapack</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">One-Click Plugin</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">One-Click Mods</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">99.9% Uptime</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">SFTP Access</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">📍 Location</span><span class="sv">India/Mumbai 🇮🇳</span></div>
+      </div>
+      <div class="ppr"><span class="pnew">₹279</span><span class="pper">/mo</span></div>
+      <div class="ppay">💳 UPI — GPay | PhonePe | Paytm | BHIM</div>
+      <button class="btn-ord">Order Now</button>
+      <div class="promo-l">🎁 Use code <strong>NETHER2026</strong> for 10% OFF</div>
+    </div>
+
+    <!-- Leaf Plan -->
+    <div class="pc rv2">
+      <div class="ph"><span class="pe">🍃</span><span class="pname">Leaf Plan</span></div>
+      <div class="pspecs">
+        <div class="sr"><span class="sl">CPU</span><span class="sv">500%</span></div>
+        <div class="sr"><span class="sl">RAM</span><span class="sv">10GB</span></div>
+        <div class="sr"><span class="sl">Storage</span><span class="sv">40GB SSD</span></div>
+        <div class="sr"><span class="sl">DDoS Protection</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">Instant Setup</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">All MC Versions</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">24/7 Support</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">One-Click Datapack</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">One-Click Plugin</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">One-Click Mods</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">99.9% Uptime</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">SFTP Access</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">📍 Location</span><span class="sv">India/Mumbai 🇮🇳</span></div>
+      </div>
+      <div class="ppr"><span class="pnew">₹349</span><span class="pper">/mo</span></div>
+      <div class="ppay">💳 UPI — GPay | PhonePe | Paytm | BHIM</div>
+      <button class="btn-ord">Order Now</button>
+      <div class="promo-l">🎁 Use code <strong>NETHER2026</strong> for 10% OFF</div>
+    </div>
+
+    <!-- Flame Plan -->
+    <div class="pc rv2">
+      <div class="ph"><span class="pe">🔥</span><span class="pname">Flame Plan</span></div>
+      <div class="pspecs">
+        <div class="sr"><span class="sl">CPU</span><span class="sv">600%</span></div>
+        <div class="sr"><span class="sl">RAM</span><span class="sv">12GB</span></div>
+        <div class="sr"><span class="sl">Storage</span><span class="sv">50GB SSD</span></div>
+        <div class="sr"><span class="sl">DDoS Protection</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">Instant Setup</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">All MC Versions</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">24/7 Support</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">One-Click Datapack</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">One-Click Plugin</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">One-Click Mods</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">99.9% Uptime</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">SFTP Access</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">📍 Location</span><span class="sv">India/Mumbai 🇮🇳</span></div>
+      </div>
+      <div class="ppr"><span class="pnew">₹419</span><span class="pper">/mo</span></div>
+      <div class="ppay">💳 UPI — GPay | PhonePe | Paytm | BHIM</div>
+      <button class="btn-ord">Order Now</button>
+      <div class="promo-l">🎁 Use code <strong>NETHER2026</strong> for 10% OFF</div>
+    </div>
+
+    <!-- Cart Plan -->
+    <div class="pc eli rv2">
+      <div class="pc-badge beli">Nether Elite ✨</div>
+      <div class="ph"><span class="pe">🛒</span><span class="pname">Cart Plan</span></div>
+      <div class="pspecs">
+        <div class="sr"><span class="sl">CPU</span><span class="sv">800%</span></div>
+        <div class="sr"><span class="sl">RAM</span><span class="sv">16GB</span></div>
+        <div class="sr"><span class="sl">Storage</span><span class="sv">70GB SSD</span></div>
+        <div class="sr"><span class="sl">DDoS Protection</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">Instant Setup</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">All MC Versions</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">24/7 Support</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">One-Click Datapack</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">One-Click Plugin</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">One-Click Mods</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">99.9% Uptime</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">SFTP Access</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">📍 Location</span><span class="sv">Singapore</span></div>
+      </div>
+      <div class="ppr"><span class="pnew">₹559</span><span class="pper">/mo</span></div>
+      <div class="ppay">💳 UPI — GPay | PhonePe | Paytm | BHIM</div>
+      <button class="btn-ord">Order Now</button>
+      <div class="promo-l">🎁 Use code <strong>NETHER2026</strong> for 10% OFF</div>
+    </div>
+
+    <!-- Fire Plan -->
+    <div class="pc eli rv2">
+      <div class="pc-badge beli">Best Value 🏆</div>
+      <div class="ph"><span class="pe">🔥</span><span class="pname">Fire Plan</span></div>
+      <div class="pspecs">
+        <div class="sr"><span class="sl">CPU</span><span class="sv">900%</span></div>
+        <div class="sr"><span class="sl">RAM</span><span class="sv">18GB</span></div>
+        <div class="sr"><span class="sl">Storage</span><span class="sv">80GB SSD</span></div>
+        <div class="sr"><span class="sl">DDoS Protection</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">Instant Setup</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">All MC Versions</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">24/7 Support</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">One-Click Datapack</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">One-Click Plugin</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">One-Click Mods</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">99.9% Uptime</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">SFTP Access</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">📍 Location</span><span class="sv">India/Mumbai 🇮🇳</span></div>
+      </div>
+      <div class="ppr"><span class="pnew">₹629</span><span class="pper">/mo</span></div>
+      <div class="ppay">💳 UPI — GPay | PhonePe | Paytm | BHIM</div>
+      <button class="btn-ord">Order Now</button>
+      <div class="promo-l">🎁 Use code <strong>NETHER2026</strong> for 10% OFF</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- GAME HOSTING -->
+<section class="sec" id="game">
+  <div class="sec-head rv2">
+    <div class="sec-tag">🎮 Game Hosting</div>
+    <h2>Your Game. <span class="hl">Our Servers.</span></h2>
+    <p class="sec-sub">Pick your game and go live in 30 seconds.</p>
+  </div>
+  <div class="tabs rv2" id="gameTabs">
+    <button class="tab on" data-game="hytale">Hytale</button>
+    <button class="tab" data-game="terraria">Terraria</button>
+    <button class="tab" data-game="fivem">FiveM</button>
+    <button class="tab" data-game="palworld">Palworld</button>
+  </div>
+  <div class="pg rv2" id="gamePlans"></div>
+</section>
+
+<!-- BOT HOSTING -->
+<section class="sec" id="bot">
+  <div class="sec-head rv2">
+    <div class="sec-tag">🤖 Bot Hosting</div>
+    <h2>Always Online. <span class="vl">Never Sleeping.</span></h2>
+    <p class="sec-sub">Discord bots, scrapers, and automation scripts.</p>
+  </div>
+  <div class="tabs rv2" id="botTabs">
+    <button class="tab on" data-bot="nodejs">Node.js</button>
+    <button class="tab" data-bot="python">Python</button>
+  </div>
+  <div class="pg rv2" id="botPlans"></div>
+</section>
+
+<!-- VPS -->
+<section class="sec" id="vps">
+  <div class="sec-head rv2">
+    <div class="sec-tag">🖥️ VPS Hosting</div>
+    <h2>🚀 Mumbai 🇮🇳 <span class="hl">Premium AMD VPS</span></h2>
+    <p class="sec-sub">AMD EPYC 7R13 @ 2.889GHz | Delhi, India | Low Latency Network</p>
+  </div>
+  <div class="vps-g rv2">
+
+    <!-- Starter VPS -->
+    <div class="vc">
+      <div class="vc-name">🥉 Starter VPS</div>
+      <div class="vc-sub">Bots • Panels • Small Hosting</div>
+      <div class="vc-row"><div class="vc-ram">RAM: <span>4GB DDR4</span></div><div class="vc-price">₹149<small>/mo</small></div></div>
+      <div class="vc-specs">
+        <div class="sr"><span class="sl">CPU</span><span class="sv">AMD EPYC 7R13</span></div>
+        <div class="sr"><span class="sl">vCores</span><span class="sv">2 vCPU</span></div>
+        <div class="sr"><span class="sl">Storage</span><span class="sv">30GB NVMe</span></div>
+        <div class="sr"><span class="sl">Bandwidth</span><span class="sv">Unmetered</span></div>
+        <div class="sr"><span class="sl">IPv4</span><span class="sv">1 Dedicated</span></div>
+        <div class="sr"><span class="sl">DDoS Protection</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">24/7 Support</span><span class="sv">✅</span></div>
+      </div>
+      <div class="vc-pay">💳 UPI — GPay | PhonePe | Paytm | BHIM</div>
+      <button class="btn-ord">Order Now</button>
+    </div>
+
+    <!-- Professional VPS -->
+    <div class="vc" style="border-color:rgba(255,45,45,.35);">
+      <div class="vc-badge" style="background:var(--accent);color:#fff;font-size:.68rem;font-family:Rajdhani,sans-serif;font-weight:700;letter-spacing:1px;padding:3px 10px;border-radius:20px;display:inline-block;margin-bottom:8px;">⚡ MOST POPULAR</div>
+      <div class="vc-name">🥈 Professional VPS</div>
+      <div class="vc-sub">Game Servers • Dev • Business</div>
+      <div class="vc-row"><div class="vc-ram">RAM: <span>8GB DDR4</span></div><div class="vc-price">₹299<small>/mo</small></div></div>
+      <div class="vc-specs">
+        <div class="sr"><span class="sl">CPU</span><span class="sv">AMD EPYC 7R13</span></div>
+        <div class="sr"><span class="sl">vCores</span><span class="sv">4 vCPU</span></div>
+        <div class="sr"><span class="sl">Storage</span><span class="sv">50GB NVMe</span></div>
+        <div class="sr"><span class="sl">Bandwidth</span><span class="sv">Unmetered</span></div>
+        <div class="sr"><span class="sl">IPv4</span><span class="sv">1 Dedicated</span></div>
+        <div class="sr"><span class="sl">Advanced DDoS</span><span class="sv">✅</span></div>
+        <div class="sr"><span class="sl">Priority Support</span><span class="sv">✅</span></div>
+      </div>
+      <div class="vc-pay">💳 UPI — GPay | PhonePe | Paytm | BHIM</div>
+      <button class="btn-ord">Order Now</button>
+    </div>
+
+    <!-- Lite VPS -->
+    <div class="vc">
+      <div class="vc-name">🥇 Lite VPS</div>
+      <div class="vc-sub">High Traffic • Large Projects</div>
+      <div class="vc-row"><div class="vc-ram">RAM: <span>16GB DDR4</span></div><div class="vc-price">₹599<small>/mo</small></div></div>
+      <div class="vc-specs">
+        <div class="sr"><span class="sl">CPU</span><span class="sv">AMD EPYC 7R13</span></div>
+        <div class="sr"><span class="sl">vCores</span><span class="sv">8 vCore</span></div>
+        <div class="sr"><span class="sl">Storage</span><span class="sv">90GB NVMe</span></div>
+        <div class="sr"><span class="sl">Uplink</span><span class="sv">1 Gbps Premium</span></div>
+        <div class="sr"><span class="sl">Bandwidth</span><span class="sv">Unmetered (Fair Use)</span></div>
+        <div class="sr"><span class="sl">IPv4</span><span class="sv">1 Dedicated</span></div>
+        <div class="sr"><span class="sl">Location</span><span class="sv">Mumbai 🇮🇳</span></div>
+        <div class="sr"><span class="sl">Uptime</span><span class="sv">99.9%</span></div>
+      </div>
+      <div class="vc-pay">💳 UPI — GPay | PhonePe | Paytm | BHIM</div>
+      <button class="btn-ord">Order Now</button>
+    </div>
+
+    <!-- AMD Large -->
+    <div class="vc eli" style="border-color:rgba(255,45,45,.4);">
+      <div class="vc-badge" style="background:linear-gradient(90deg,#c0392b,#ff2d2d);color:#fff;font-size:.68rem;font-family:Rajdhani,sans-serif;font-weight:700;letter-spacing:1px;padding:3px 10px;border-radius:20px;display:inline-block;margin-bottom:8px;">👑 NETHER ELITE</div>
+      <div class="vc-name">💎 AMD Large</div>
+      <div class="vc-sub">Enterprise • Max Performance</div>
+      <div class="vc-row"><div class="vc-ram">RAM: <span>32GB DDR4</span></div><div class="vc-price">₹999<small>/mo</small></div></div>
+      <div class="vc-specs">
+        <div class="sr"><span class="sl">CPU</span><span class="sv">AMD EPYC 7R13</span></div>
+        <div class="sr"><span class="sl">vCores</span><span class="sv">16 vCore</span></div>
+        <div class="sr"><span class="sl">Storage</span><span class="sv">150GB NVMe</span></div>
+        <div class="sr"><span class="sl">Uplink</span><span class="sv">1 Gbps Premium</span></div>
+        <div class="sr"><span class="sl">Bandwidth</span><span class="sv">Unmetered (Fair Use)</span></div>
+        <div class="sr"><span class="sl">IPv4</span><span class="sv">1 Dedicated</span></div>
+        <div class="sr"><span class="sl">Location</span><span class="sv">Mumbai 🇮🇳</span></div>
+        <div class="sr"><span class="sl">Uptime</span><span class="sv">99.9%</span></div>
+      </div>
+      <div class="vc-pay">💳 UPI — GPay | PhonePe | Paytm | BHIM</div>
+      <button class="btn-ord">Order Now</button>
+    </div>
+
+  </div>
+
+  <div class="why-vps-g rv2">
+    <div class="wv"><div class="wvi">🔬</div>AMD EPYC CPUs</div>
+    <div class="wv"><div class="wvi">🌐</div>Mumbai Low-Ping</div>
+    <div class="wv"><div class="wvi">⚡</div>Premium Nodes</div>
+    <div class="wv"><div class="wvi">🛡️</div>Panels &amp; Apps</div>
+  </div>
+</section>
+
+<!-- DOMAINS -->
+<section class="sec" id="domains">
+  <div class="sec-head rv2">
+    <div class="sec-tag">🌐 Domains</div>
+    <h2>Domain <span class="hl">Registration</span></h2>
+    <p class="sec-sub">Get your perfect domain and launch your brand today.</p>
+  </div>
+  <div class="dom-g rv2">
+    <div class="dc"><div class="dext">.fun</div><div class="dprice">On Request</div></div>
+    <div class="dc"><div class="dext">.xyz</div><div class="dprice">On Request</div></div>
+    <div class="dc"><div class="dext">.com</div><div class="dprice">On Request</div></div>
+    <div class="dc"><div class="dext">.net</div><div class="dprice">On Request</div></div>
+    <div class="dc"><div class="dext">.club</div><div class="dprice">On Request</div></div>
+    <div class="dc"><div class="dext">.shop</div><div class="dprice">On Request</div></div>
+    <div class="dc"><div class="dext">.tech</div><div class="dprice">On Request</div></div>
+    <div class="dc"><div class="dext">.online</div><div class="dprice">On Request</div></div>
+    <div class="dc"><div class="dext">.in</div><div class="dprice">On Request</div></div>
+    <div class="dc"><div class="dext">.store</div><div class="dprice">On Request</div></div>
+    <div class="dc"><div class="dext">.org</div><div class="dprice">On Request</div></div>
+    <div class="dc"><div class="dext">.blog</div><div class="dprice">On Request</div></div>
+    <div class="dc"><div class="dext">.info</div><div class="dprice">On Request</div></div>
+    <div class="dc"><div class="dext">.io</div><div class="dprice">On Request</div></div>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section class="sec" id="reviews">
+  <div class="sec-head rv2">
+    <div class="sec-tag">⭐ Customer Reviews</div>
+    <h2>Customer <span class="hl">Reviews ⭐</span></h2>
+    <p class="sec-sub">Real reviews from real Nether Nodes customers.</p>
+  </div>
+  <div class="rev-g rv2">
+    <div class="rv"><div class="rq">"</div><div class="rh"><div class="ra" style="background:#c0392b">R</div><div><div class="rname">Noor YT</div><div class="rgame">Minecraft</div></div></div><div class="rstars">★★★★★</div><div class="rtext">Best Minecraft hosting in India! Server was up in 20 seconds and the latency is insane. Literally feels like local play.</div></div>
+    <div class="rv"><div class="rq">"</div><div class="rh"><div class="ra" style="background:#922b21">P</div><div><div class="rname">Itz Sky</div><div class="rgame">FiveM</div></div></div><div class="rstars">★★★★★</div><div class="rtext">Moved from another host. Night and day difference. 100+ players on my FiveM server with zero lag. Nether Nodes is the real deal.</div></div>
+    <div class="rv"><div class="rq">"</div><div class="rh"><div class="ra" style="background:#059669">B</div><div><div class="rname">It's shiv</div><div class="rgame">Node.js Bot</div></div></div><div class="rstars">★★★★★</div><div class="rtext">My Discord bot has been running for 3 months straight without a single crash. 99.99% uptime is not a joke here.</div></div>
+    <div class="rv"><div class="rq">"</div><div class="rh"><div class="ra" style="background:#dc2626">S</div><div><div class="rname">Blade Yt</div><div class="rgame">Palworld</div></div></div><div class="rstars">★★★★★</div><div class="rtext">Palworld server setup was literally one click. The panel is super clean and support replied in mins on Discord.</div></div>
+    <div class="rv"><div class="rq">"</div><div class="rh"><div class="ra" style="background:#b45309">N</div><div><div class="rname">Astroxog</div><div class="rgame">Python Bot</div></div></div><div class="rstars">★★★★★</div><div class="rtext">Running a Python trading bot 24/7. Fast NVMe, great uptime, and price-to-performance is unbeatable.</div></div>
+    <div class="rv"><div class="rq">"</div><div class="rh"><div class="ra" style="background:#c0392b">X</div><div><div class="rname">Vibhu xd</div><div class="rgame">Terraria</div></div></div><div class="rstars">★★★★★</div><div class="rtext">Our Terraria community loves the low ping. Tested with 30 players and it handled everything smoothly.</div></div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="sec" id="faq">
+  <div class="sec-head rv2">
+    <div class="sec-tag">❓ FAQ</div>
+    <h2>Frequently Asked <span class="hl">Questions</span></h2>
+  </div>
+  <div class="faq-list rv2">
+    <div class="fi"><button class="fq">How fast can I get my server running?<span class="ficon">+</span></button><div class="fa">Your server is deployed in under 30 seconds after payment. One-click installs for mods and plugins make setup instant.</div></div>
+    <div class="fi"><button class="fq">Do you offer DDoS protection?<span class="ficon">+</span></button><div class="fa">Yes! Enterprise-grade DDoS mitigation included free with every plan, forever. Your server stays online no matter what.</div></div>
+    <div class="fi"><button class="fq">Where are your servers located?<span class="ficon">+</span></button><div class="fa">Data centers in Mumbai and Chennai for game servers, and Delhi for VPS — all optimized for ultra-low latency to Indian players.</div></div>
+    <div class="fi"><button class="fq">Can I install custom mods and plugins?<span class="ficon">+</span></button><div class="fa">Absolutely. One-click installs for popular modpacks plus custom uploads via our control panel.</div></div>
+    <div class="fi"><button class="fq">What is your uptime guarantee?<span class="ficon">+</span></button><div class="fa">99.9% uptime SLA backed by redundant infrastructure. VPS Pro plans offer 99.99%.</div></div>
+    <div class="fi"><button class="fq">Can I upgrade my plan later?<span class="ficon">+</span></button><div class="fa">Yes, upgrade anytime from your control panel. The price difference is prorated for the remaining billing period.</div></div>
+    <div class="fi"><button class="fq">Do you support Node.js and Python bots?<span class="ficon">+</span></button><div class="fa">Yes! Both Node.js and Python environments, with auto-restart, Git/pip integration, and 24/7 uptime monitoring.</div></div>
+    <div class="fi"><button class="fq">How does the NETHER2026 code work?<span class="ficon">+</span></button><div class="fa">Enter NETHER2026 at checkout for 10% off your first month on any plan. Applied instantly.</div></div>
+    <div class="fi"><button class="fq">What payment methods do you accept?<span class="ficon">+</span></button><div class="fa">UPI via GPay, PhonePe, Paytm, and BHIM. Additional options available on request.</div></div>
+    <div class="fi"><button class="fq">How can I contact support?<span class="ficon">+</span></button><div class="fa">24/7 via <a href="https://discord.gg/bp5RU3jePe" target="_blank" style="color:var(--accent)">Discord</a>, support tickets, and live chat. We typically respond within minutes for urgent issues.</div></div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="fl">NETHER NODES</div>
+  <div class="fd">Elite game server hosting for Indian gamers. Low latency, instant deployment, and free DDoS protection forever.</div>
+  <div class="fsoc">
+    <a href="https://discord.gg/bp5RU3jePe" target="_blank" title="Discord">💬</a>
+    <a href="#" title="Twitter">🐦</a>
+    <a href="#" title="Instagram">📸</a>
+  </div>
+  <div class="fcols">
+    <div class="fcol"><h4>Services</h4><a href="#mc">Minecraft</a><a href="#game">Games</a><a href="#bot">Bot Hosting</a><a href="#vps">VPS</a><a href="#domains">Domains</a></div>
+    <div class="fcol"><h4>Support</h4><a href="https://discord.gg/bp5RU3jePe" target="_blank">Discord</a><a href="#">Open Ticket</a><a href="#">Live Chat</a><a href="#">Knowledge Base</a></div>
+    <div class="fcol"><h4>Company</h4><a href="#">About Us</a><a href="#">Blog</a><a href="#">Careers</a><a href="#">Status</a></div>
+    <div class="fcol"><h4>Games</h4><a href="#">Hytale</a><a href="#">FiveM</a><a href="#">Terraria</a><a href="#">Palworld</a></div>
+  </div>
+  <div class="fcopy">© 2026 Nether Nodes. All rights reserved. Built for Indian Gamers 🇮🇳</div>
+  <div class="fbadges">
+    <span class="fbadge">99.9% UPTIME</span>
+    <span class="fbadge">FREE DDOS</span>
+    <span class="fbadge">24/7 SUPPORT</span>
+    <span class="fbadge">INDIAN SERVERS</span>
+  </div>
+</footer>
+
+<!-- CART MODAL -->
+<div class="cart-overlay" id="cartOverlay">
+  <div class="cart-sheet" id="cartSheet">
+    <div class="cart-drag"></div>
+    <div class="cart-header">
+      <div class="cart-title">🛒 YOUR ORDER</div>
+      <button class="cart-close" id="cartClose">✕</button>
+    </div>
+
+    <div class="cart-table-head">
+      <span>Product / Options</span>
+      <span>Qty</span>
+      <span>Price/Cycle</span>
+    </div>
+
+    <div id="cartItems"></div>
+
+    <!-- Promo Code -->
+    <div class="cart-promo">
+      <div class="promo-tabs"><button class="ptab on">Apply Promo Code</button></div>
+      <div class="promo-box">
+        <span class="promo-icon">🏷️</span>
+        <input class="promo-input" id="promoInput" type="text" placeholder="Enter promo code if you have one">
+        <button class="promo-validate" id="promoValidate">Validate</button>
+      </div>
+      <div class="promo-hint" id="promoHint">✅ Code NETHER2026 applied! 10% discount added.</div>
+    </div>
+
+    <!-- Order Summary -->
+    <div class="cart-summary">
+      <div class="cs-head">Order Summary</div>
+      <div class="cs-row"><span class="cs-label">Subtotal</span><span class="cs-val" id="csSubtotal">—</span></div>
+      <div class="cs-row" id="csDiscountRow" style="display:none"><span class="cs-label cs-discount">Promo (10% OFF)</span><span class="cs-val cs-discount" id="csDiscount">—</span></div>
+      <div class="cs-row"><span class="cs-label">Service Charge @ 3.00%</span><span class="cs-val" id="csCharge">—</span></div>
+      <div class="cs-row"><span class="cs-label">Totals</span><span class="cs-val" id="csTotals">—</span></div>
+      <div class="cs-total-row">
+        <div>
+          <div class="cs-total-label">Total Due Today</div>
+        </div>
+        <div>
+          <div class="cs-total-amt" id="csTotalAmt">—</div>
+          <span class="cs-total-due">Monthly</span>
+        </div>
+      </div>
+    </div>
+
+    <button class="cart-checkout" id="cartCheckoutBtn">Checkout →</button>
+    <a href="#" class="cart-continue" id="cartContinue">Continue Shopping</a>
+  </div>
+</div>
+
+<!-- Sticky Promo Bar -->
+<div class="sticky" id="stickyBar">
+  <div class="sticky-txt">
+    <span class="sticky-label">⚡ NETHER ELITE</span>
+    10% OFF — code <span class="sticky-code">NETHER2026</span>
+  </div>
+  <a href="#mc" class="sticky-cta">Claim Deal</a>
+  <button class="sticky-x" onclick="document.getElementById('stickyBar').style.display='none'">✕</button>
+</div>
+
+<!-- WELCOME POPUP -->
+<div class="popup-overlay" id="popupOverlay">
+  <div class="popup-box">
+    <button class="popup-close" id="popupClose">✕</button>
+    <div class="popup-icon">🎁</div>
+    <div class="popup-tag">⚡ NETHER NODE LAUNCH</div>
+    <div class="popup-title">Exclusive <span>10% OFF</span></div>
+    <div class="popup-sub">+ Free DDoS Protection for Life!<br>Use code at checkout:</div>
+    <div class="popup-code-box">NETHER2026</div>
+    <a href="#mc" class="popup-btn" id="popupClaim">🚀 Claim Elite Deal Now</a>
+    <button class="popup-later" id="popupLater">Maybe later</button>
+  </div>
+</div>
+
+<!-- QR PAYMENT MODAL -->
+<div class="qr-overlay" id="qrOverlay">
+  <div class="qr-box">
+    <div class="qr-top">
+      <div class="qr-title">💳 PAY VIA UPI</div>
+      <button class="qr-close-btn" id="qrClose">✕</button>
+    </div>
+    <div class="qr-upi-id">
+      <span>UPI ID:</span> nitroxaditya@fam
+      <button class="qr-copy" onclick="copyUPI()" title="Copy UPI ID">📋</button>
+    </div>
+    <div class="qr-img-wrap">
+      <img src="data:image/jpeg;base64,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" alt="UPI QR Code">
+    </div>
+    <div class="qr-amount">
+      <div class="qr-amount-label">Amount to Pay</div>
+      <div class="qr-amount-val" id="qrAmountVal">₹0 INR</div>
+      <div class="qr-amount-plan" id="qrPlanName">—</div>
+    </div>
+    <div class="qr-steps">
+      <div class="qr-step"><div class="qr-step-num">1</div>Open GPay, PhonePe, Paytm or any UPI app</div>
+      <div class="qr-step"><div class="qr-step-num">2</div>Scan this QR code or pay to <strong>nitroxaditya@fam</strong></div>
+      <div class="qr-step"><div class="qr-step-num">3</div>Add your order details in the payment note</div>
+      <div class="qr-step"><div class="qr-step-num">4</div>Send screenshot to our Discord / WhatsApp for activation</div>
+    </div>
+    <div class="qr-btns">
+      <a href="https://discord.gg/bp5RU3jePe" target="_blank" class="qr-discord-btn">💬 Join Discord</a>
+      <a href="https://discord.gg/bp5RU3jePe" target="_blank" class="qr-ticket-btn">🎫 Create Ticket</a>
+    </div>
+    <a href="https://discord.gg/bp5RU3jePe" target="_blank" class="qr-done-btn">💬 Join Discord to Complete Purchase</a>
+    <div class="qr-note">After payment, your server will be activated within 30 seconds.<br>Support: <a href="https://discord.gg/bp5RU3jePe" target="_blank" style="color:var(--accent)">Join Discord</a></div>
+  </div>
+</div>
+
+
+<script>
+// ── Particles ──
+(function(){
+  const c=document.getElementById('particles');
+  if(!c)return;
+  const ctx=c.getContext('2d');
+  let W,H,pts=[];
+  function resize(){W=c.width=innerWidth;H=c.height=innerHeight;}
+  resize();window.addEventListener('resize',()=>{resize();init();});
+  function rand(a,b){return Math.random()*(b-a)+a;}
+  function init(){
+    pts=[];
+    const n=Math.floor((W*H)/14000);
+    for(let i=0;i<n;i++){
+      pts.push({x:rand(0,W),y:rand(0,H),r:rand(.4,1.6),
+        vx:rand(-.12,.12),vy:rand(-.12,.12),
+        a:rand(.2,.7),da:rand(.002,.006),dir:Math.random()>.5?1:-1});
+    }
+  }
+  init();
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    pts.forEach(p=>{
+      p.x+=p.vx;p.y+=p.vy;
+      p.a+=p.da*p.dir;
+      if(p.a>0.75||p.a<0.15)p.dir*=-1;
+      if(p.x<0)p.x=W;if(p.x>W)p.x=0;
+      if(p.y<0)p.y=H;if(p.y>H)p.y=0;
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(180,180,255,${p.a})`;
+      ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ── Welcome Popup ──
+setTimeout(()=>{
+  const po=document.getElementById('popupOverlay');
+  if(po) po.classList.add('show');
+},800);
+function closePopup(){
+  const po=document.getElementById('popupOverlay');
+  if(po) po.classList.remove('show');
+}
+on('popupClose','click', closePopup);
+on('popupLater','click', closePopup);
+on('popupClaim','click', closePopup);
+
+// ── CART ──
+let cart = null;
+let promoApplied = false;
+
+function parsePrice(s){ return parseInt(s.replace(/[₹,]/g,''))||0; }
+
+function $(id){ return document.getElementById(id); }
+
+function openCart(planName, planType, price, qty){
+  cart = {name:planName, type:planType, price:parsePrice(price), qty:qty||1};
+  promoApplied = false;
+  const pi=$('promoInput'); if(pi) pi.value='';
+  const ph=$('promoHint'); if(ph){ ph.classList.remove('show'); ph.textContent='✅ Code NETHER2026 applied! 10% discount added.'; ph.style.color=''; }
+  const dr=$('csDiscountRow'); if(dr) dr.style.display='none';
+  renderCart();
+  const co=$('cartOverlay'); if(co) co.classList.add('show');
+  document.body.style.overflow='hidden';
+}
+
+function renderCart(){
+  const items=$('cartItems'); if(!items) return;
+  if(!cart){ items.innerHTML='<div class="cart-empty-msg">Your cart is empty.</div>'; updateSummary(); return; }
+  items.innerHTML=`<div class="cart-item"><div class="cart-item-top"><div><div class="cart-item-name">${cart.name}</div><div class="cart-item-sub">${cart.type}<br><span>» Egg Selection: Paper (Default)</span></div></div><div class="cart-qty"><button class="qty-btn" onclick="changeQty(-1)">−</button><div class="qty-val" id="qtyVal">${cart.qty}</div><button class="qty-btn" onclick="changeQty(1)">+</button></div><div class="cart-item-price"><div class="cip-main">₹${(cart.price*cart.qty).toLocaleString('en-IN')}</div><span class="cip-cycle">Monthly</span></div><button class="cart-remove" onclick="removeItem()">✕</button></div></div>`;
+  updateSummary();
+}
+
+function changeQty(delta){
+  if(!cart) return;
+  cart.qty=Math.max(1,cart.qty+delta);
+  const qv=$('qtyVal'); if(qv) qv.textContent=cart.qty;
+  const cm=document.querySelector('.cip-main'); if(cm) cm.textContent='₹'+(cart.price*cart.qty).toLocaleString('en-IN');
+  updateSummary();
+}
+
+function removeItem(){ cart=null; renderCart(); }
+
+function updateSummary(){
+  if(!cart){
+    ['csSubtotal','csCharge','csTotals','csTotalAmt'].forEach(id=>{ const el=$(id); if(el) el.textContent='—'; });
+    return;
+  }
+  let sub=cart.price*cart.qty;
+  let disc=promoApplied?Math.round(sub*0.10):0;
+  let afterDisc=sub-disc;
+  let charge=Math.round(afterDisc*0.03);
+  let total=afterDisc+charge;
+  const cs=$('csSubtotal'); if(cs) cs.textContent='₹'+sub.toLocaleString('en-IN')+' INR';
+  const dr=$('csDiscountRow');
+  if(promoApplied){
+    if(dr) dr.style.display='flex';
+    const cd=$('csDiscount'); if(cd) cd.textContent='−₹'+disc.toLocaleString('en-IN')+' INR';
+  } else {
+    if(dr) dr.style.display='none';
+  }
+  const ch=$('csCharge'); if(ch) ch.textContent='₹'+charge.toLocaleString('en-IN')+' INR';
+  const ct=$('csTotals'); if(ct) ct.textContent='₹'+total.toLocaleString('en-IN')+' INR Monthly';
+  const ca=$('csTotalAmt'); if(ca) ca.textContent='₹'+total.toLocaleString('en-IN')+' INR';
+}
+
+function closeCart(){
+  const co=$('cartOverlay'); if(co) co.classList.remove('show');
+  document.body.style.overflow='';
+}
+
+function openQR(amount, planName){
+  const qa=$('qrAmountVal'); if(qa) qa.textContent=amount;
+  const qp=$('qrPlanName'); if(qp) qp.textContent=planName;
+  const qo=$('qrOverlay'); if(qo) qo.classList.add('show');
+  document.body.style.overflow='hidden';
+}
+
+function closeQR(){
+  const qo=$('qrOverlay'); if(qo) qo.classList.remove('show');
+  document.body.style.overflow='';
+}
+
+function copyUPI(){
+  navigator.clipboard && navigator.clipboard.writeText('nitroxaditya@fam').then(()=>{
+    const btn=document.querySelector('.qr-copy');
+    if(btn){ btn.textContent='✅'; setTimeout(()=>btn.textContent='📋',1500); }
+  });
+}
+
+// Safe addEventListener helper
+function on(id, evt, fn){ const el=$(id); if(el) el.addEventListener(evt,fn); }
+
+on('cartClose','click', closeCart);
+on('cartContinue','click', e=>{ e.preventDefault(); closeCart(); });
+on('cartOverlay','click', e=>{ if(e.target===$('cartOverlay')) closeCart(); });
+on('promoValidate','click',()=>{
+  const pi=$('promoInput'); if(!pi) return;
+  const code=pi.value.trim().toUpperCase();
+  const ph=$('promoHint'); if(!ph) return;
+  if(code==='NETHER2026'){
+    promoApplied=true;
+    ph.textContent='✅ Code NETHER2026 applied! 10% discount added.';
+    ph.style.color='';
+    ph.classList.add('show');
+    updateSummary();
+  } else {
+    promoApplied=false;
+    ph.textContent='❌ Invalid promo code.';
+    ph.style.color='#f87171';
+    ph.classList.add('show');
+    updateSummary();
+  }
+});
+on('cartCheckoutBtn','click',()=>{
+  const amt=($('csTotalAmt')||{}).textContent||'';
+  const plan=cart?cart.name+' — '+cart.type:'—';
+  openQR(amt,plan);
+});
+on('qrClose','click', closeQR);
+on('qrOverlay','click', e=>{ if(e.target===$('qrOverlay')) closeQR(); });
+on('qrDoneBtn','click',()=>{
+  closeQR(); closeCart();
+  const conf=document.createElement('div');
+  conf.style.cssText='position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#0d1526;border:1px solid rgba(74,222,128,.3);border-radius:14px;padding:24px 20px;text-align:center;z-index:700;max-width:280px;width:90%;box-shadow:0 0 40px rgba(74,222,128,.1)';
+  conf.innerHTML='<div style="font-size:2rem;margin-bottom:10px">🎉</div><div style="font-family:Orbitron,sans-serif;font-size:.85rem;font-weight:700;color:#e2eaf8;margin-bottom:8px">PAYMENT SUBMITTED!</div><div style="font-size:.8rem;color:#8899bb;line-height:1.6">Thank you! Send payment screenshot to our Discord.<br><br>Your server will be activated within <strong style=\"color:#4ade80\">30 seconds</strong>.</div><button onclick="this.parentElement.remove()" style="margin-top:16px;background:#ff2d2d;color:#fff;border:none;padding:10px 24px;border-radius:8px;font-family:Rajdhani,sans-serif;font-weight:700;font-size:.9rem;letter-spacing:1px;width:100%">OK, Got it!</button>';
+  document.body.appendChild(conf);
+});
+
+// Order Now — event delegation (works for dynamic cards too)
+document.addEventListener('click', e=>{
+  if(e.target.classList.contains('btn-ord')){
+    const card=e.target.closest('.pc')||e.target.closest('.vc');
+    if(!card) return;
+    const name=(card.querySelector('.pname')||card.querySelector('.vc-name')||{}).textContent||'Server Plan';
+    const priceEl=card.querySelector('.pnew')||card.querySelector('.vc-price');
+    const price=priceEl?priceEl.textContent.replace(/[^\d,]/g,''):'0';
+    const type=(card.closest('section')?.querySelector('.sec-tag')||{}).textContent||'Hosting';
+    openCart(name.trim(), type.trim(), '₹'+price, 1);
+  }
+});
+
+// ── Hamburger ──
+const ham=$('ham'), drawer=$('drawer');
+if(ham && drawer){
+  ham.addEventListener('click',()=>{
+    ham.classList.toggle('open');
+    drawer.classList.toggle('open');
+    document.body.style.overflow=drawer.classList.contains('open')?'hidden':'';
+  });
+  drawer.querySelectorAll('a').forEach(a=>{
+    a.addEventListener('click',()=>{ ham.classList.remove('open'); drawer.classList.remove('open'); document.body.style.overflow=''; });
+  });
+}
+
+// ── Scroll reveal ──
+const obs=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('vis'); }),{threshold:.07});
+document.querySelectorAll('.rv2').forEach(el=>obs.observe(el));
+
+// ── FAQ ──
+document.querySelectorAll('.fq').forEach(q=>{
+  q.addEventListener('click',()=>{
+    const item=q.parentElement, was=item.classList.contains('open');
+    document.querySelectorAll('.fi').forEach(i=>i.classList.remove('open'));
+    if(!was) item.classList.add('open');
+  });
+});
+
+// ── Game tabs ──
+const gd={
+  hytale:[{e:'⭐',n:'Sprout',r:'2GB',c:'Up to 100%',s:'10GB NVMe',o:'₹99',p:'₹89'},{e:'⚔️',n:'Adventurer',r:'4GB',c:'Up to 200%',s:'20GB NVMe',o:'₹199',p:'₹179',pop:1},{e:'🏆',n:'Champion',r:'6GB',c:'Up to 300%',s:'30GB NVMe',o:'₹349',p:'₹299'},{e:'👑',n:'Legend',r:'8GB',c:'Up to 400%',s:'50GB NVMe',o:'₹549',p:'₹449',eli:1}],
+  terraria:[{e:'🌱',n:'Seedling',r:'1GB',c:'Up to 50%',s:'5GB NVMe',o:'₹49',p:'₹45'},{e:'⚡',n:'Warrior',r:'2GB',c:'Up to 100%',s:'10GB NVMe',o:'₹89',p:'₹79',pop:1},{e:'💎',n:'Hardmode',r:'4GB',c:'Up to 200%',s:'20GB NVMe',o:'₹179',p:'₹149'},{e:'🐉',n:'Moon Lord',r:'8GB',c:'Up to 400%',s:'40GB NVMe',o:'₹349',p:'₹299',eli:1}],
+  fivem:[{e:'🚗',n:'Street',r:'4GB',c:'Up to 200%',s:'20GB NVMe',o:'₹199',p:'₹179'},{e:'🏎️',n:'Racer',r:'8GB',c:'Up to 400%',s:'40GB NVMe',o:'₹349',p:'₹299',pop:1},{e:'🚔',n:'Cop',r:'12GB',c:'Up to 600%',s:'60GB NVMe',o:'₹549',p:'₹449'},{e:'🏙️',n:'City Boss',r:'16GB',c:'Up to 800%',s:'80GB NVMe',o:'₹799',p:'₹649',eli:1}],
+  palworld:[{e:'🌿',n:'Grassland',r:'4GB',c:'Up to 200%',s:'20GB NVMe',o:'₹179',p:'₹149'},{e:'🔥',n:'Volcano',r:'8GB',c:'Up to 400%',s:'40GB NVMe',o:'₹299',p:'₹249',pop:1},{e:'❄️',n:'Tundra',r:'12GB',c:'Up to 600%',s:'60GB NVMe',o:'₹449',p:'₹379'},{e:'⚡',n:'Legendary',r:'16GB',c:'Up to 800%',s:'80GB NVMe',o:'₹649',p:'₹549',eli:1}]
+};
+function mkPC(p){return`<div class="pc ${p.pop?'pop':''} ${p.eli?'eli':''}">
+  ${p.pop?'<div class="pc-badge bpop">Most Popular</div>':''}
+  ${p.eli?'<div class="pc-badge beli">Nether Elite ✨</div>':''}
+  <div class="ph"><span class="pe">${p.e}</span><span class="pname">${p.n}</span></div>
+  <div class="pspecs">
+    <div class="sr"><span class="sl">RAM</span><span class="sv">${p.r}</span></div>
+    <div class="sr"><span class="sl">CPU</span><span class="sv">${p.c} Optimized</span></div>
+    <div class="sr"><span class="sl">Storage</span><span class="sv">${p.s}</span></div>
+    <div class="sr"><span class="sl">Slots</span><span class="sv g">Unlimited</span></div>
+    <div class="sr"><span class="sl">DDoS</span><span class="sv">✅</span></div>
+  </div>
+  <div class="ppr"><span class="po">${p.o}/mo</span><span class="pnew">${p.p}</span><span class="pper">/mo</span></div>
+  <div class="ppay">💳 UPI — GPay | PhonePe | Paytm | BHIM</div>
+  <button class="btn-ord">Order Now</button>
+  <div class="promo-l">🎁 Use code <strong>NETHER2026</strong> for 10% OFF</div>
+</div>`;}
+function renderGame(k){ const gp=$('gamePlans'); if(gp) gp.innerHTML=gd[k].map(mkPC).join(''); }
+renderGame('hytale');
+document.querySelectorAll('#gameTabs .tab').forEach(b=>{
+  b.addEventListener('click',()=>{ document.querySelectorAll('#gameTabs .tab').forEach(x=>x.classList.remove('on')); b.classList.add('on'); renderGame(b.dataset.game); });
+});
+
+// ── Bot tabs ──
+const bd={
+  nodejs:[
+    {e:'🟢',n:'Nano',r:'512MB',c:'0.5 vCPU',s:'5GB NVMe',u:'99.5%',x:'Auto Restart',o:'₹30',p:'₹15'},
+    {e:'⚡',n:'Micro',r:'1GB',c:'1 vCPU',s:'10GB NVMe',u:'99.9%',x:'Auto Restart',o:'₹60',p:'₹30'},
+    {e:'🔥',n:'Standard',r:'2GB',c:'2 vCPU',s:'20GB NVMe',u:'99.9%',x:'Git Integration',o:'₹80',p:'₹60',pop:1},
+    {e:'👑',n:'Pro',r:'4GB',c:'4 vCPU',s:'40GB NVMe',u:'99.99%',x:'Priority Support',o:'₹100',p:'₹80',eli:1}
+  ],
+  python:[
+    {e:'🐍',n:'Nano',r:'512MB',c:'0.5 vCPU',s:'5GB NVMe',u:'99.5%',x:'Auto Restart',o:'₹30',p:'₹15'},
+    {e:'⚡',n:'Micro',r:'1GB',c:'1 vCPU',s:'10GB NVMe',u:'99.9%',x:'Auto Restart',o:'₹60',p:'₹30'},
+    {e:'🔥',n:'Standard',r:'2GB',c:'2 vCPU',s:'20GB NVMe',u:'99.9%',x:'pip Support',o:'₹80',p:'₹60',pop:1},
+    {e:'👑',n:'Pro',r:'4GB',c:'4 vCPU',s:'40GB NVMe',u:'99.99%',x:'pip Support',x2:'Priority Support',o:'₹100',p:'₹80',eli:1}
+  ]
+};
+function mkBot(p){return`<div class="pc ${p.pop?'pop':''} ${p.eli?'eli':''}">
+  ${p.pop?'<div class="pc-badge bpop">Most Popular</div>':''}
+  ${p.eli?'<div class="pc-badge beli">Nether Elite ✨</div>':''}
+  <div class="ph"><span class="pe">${p.e}</span><span class="pname">${p.n}</span></div>
+  <div class="pspecs">
+    <div class="sr"><span class="sl">RAM</span><span class="sv">${p.r}</span></div>
+    <div class="sr"><span class="sl">CPU</span><span class="sv">${p.c}</span></div>
+    <div class="sr"><span class="sl">Storage</span><span class="sv">${p.s}</span></div>
+    <div class="sr"><span class="sl">Uptime SLA</span><span class="sv g">${p.u}</span></div>
+    <div class="sr"><span class="sl">DDoS</span><span class="sv">✅</span></div>
+    <div class="sr"><span class="sl">Auto Restart</span><span class="sv">✅</span></div>
+    <div class="sr"><span class="sl">${p.x}</span><span class="sv">✅</span></div>
+    ${p.x2?`<div class="sr"><span class="sl">${p.x2}</span><span class="sv">✅</span></div>`:''}
+  </div>
+  <div class="ppr"><span class="po">${p.o}/mo</span><span class="pnew">${p.p}</span><span class="pper">/mo</span></div>
+  <div class="ppay">💳 UPI — GPay | PhonePe | Paytm | BHIM</div>
+  <button class="btn-ord">Order Now</button>
+  <div class="promo-l">🎁 Use code <strong>NETHER2026</strong> for 10% OFF</div>
+</div>`;}
+function renderBot(k){ const bp=$('botPlans'); if(bp) bp.innerHTML=bd[k].map(mkBot).join(''); }
+renderBot('nodejs');
+document.querySelectorAll('#botTabs .tab').forEach(b=>{
+  b.addEventListener('click',()=>{ document.querySelectorAll('#botTabs .tab').forEach(x=>x.classList.remove('on')); b.classList.add('on'); renderBot(b.dataset.bot); });
+});
+</script>
+</body>
+</html>
